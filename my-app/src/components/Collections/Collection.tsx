@@ -14,22 +14,32 @@ export type objCollectionType = {
 };
 
 function Collection() {
-  const [width, setWidth] = useState<number>(window.innerWidth);
+  let n: number | null = null;
+  const hasWindow = typeof window !== "undefined";
+  if (hasWindow) n = window.innerWidth;
+  const [width, setWidth] = useState<number | null>(n);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   let number: number = 3;
   useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
+    if (hasWindow) {
+      const handleResize = () => {
+        if (hasWindow) {
+          setWidth(window.innerWidth);
+        }
+      };
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, [width]);
 
-  if (width >= 760 && width <= 1280) number = 2;
-  else if (width < 760) number = 1;
+  if (width !== null) {
+    if (width >= 760 && width <= 1280) number = 2;
+    else if (width < 760) number = 1;
+  }
 
   const items: Array<objCollectionType> = [
     {
